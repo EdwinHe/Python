@@ -41,11 +41,9 @@ class DB:
             ''')
         
         # Create table expense_record
-        # Fields: #Expense Amount#, #Type#, #Main Category#, #Sub Category#, #Description#, #Original Description#, #Key Words#
         db_curs.execute('''
             CREATE TABLE record (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            io TEXT,
             date TEXT,
             amount REAL,
             type TEXT,
@@ -59,11 +57,9 @@ class DB:
             ''')
         
         #Create table keyword_mapping
-        # Fields: #Key Words#, #Type#, #Cate#, #SubCate#
         db_curs.execute('''
             CREATE TABLE keyword_mapping (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
-            io TEXT,
             keywords TEXT,
             type TEXT,
             cate TEXT,

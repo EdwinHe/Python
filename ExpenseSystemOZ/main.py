@@ -20,9 +20,11 @@ def main():
     # Try to fill out the TBC columns 
     mainUtils.fill_out_TBC(db_handler)
     
+    # Display status
+    mainUtils.display_status()
+    
     # Display unhandled records
     mainUtils.display_TBC(db_handler)
-    
 
 if __name__ == '__main__':
     main()

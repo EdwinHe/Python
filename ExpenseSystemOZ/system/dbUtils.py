@@ -15,7 +15,7 @@ def insert_mapping(db_h, mapping):
     #Id, keywords, type, cate, subcate, priority
     query = """
         INSERT INTO keyword_mapping 
-        VALUES (NULL, ?, ?, ?, ?, ?, ?)"""
+        VALUES (NULL, ?, ?, ?, ?, ?)"""
     
     logging.debug("Execute Query: " + query + "\n@" + str(mapping)) 
     
@@ -23,14 +23,14 @@ def insert_mapping(db_h, mapping):
     db_h.db_conn.commit()
     db_curs.close()
 
-def is_new_mapping(db_h, io, keywords):
+def is_new_mapping(db_h, keywords):
     
     #try:
     db_curs = db_h.db_conn.cursor()
     db_curs.execute("""
         SELECT * 
         FROM keyword_mapping 
-        WHERE keywords = '""" + keywords + "' and io = '" + io + "'")
+        WHERE keywords = '""" + keywords + "'")
     db_h.db_conn.commit()
     result = db_curs.fetchall()
     db_curs.close()
@@ -73,7 +73,7 @@ def insert_file(db_h, file_name):
     db_curs.close()
 
 def is_new_record(db_h, exp_record):
-    [io, date, amount, desc, orig_desc, file_name] = exp_record
+    [date, amount, desc, orig_desc, file_name] = exp_record
     
     #try:
     # If record with the same date, amount and orig_desc exist, consider it the same records
@@ -97,13 +97,13 @@ def is_new_record(db_h, exp_record):
         return False
 
 def insert_record(db_h, exp_record):
-    [io, date, amount, desc, orig_desc, file_name] = exp_record
+    [date, amount, desc, orig_desc, file_name] = exp_record
     
     #try:
     db_curs = db_h.db_conn.cursor()
     query = """
         INSERT INTO record
-        VALUES (NULL, ?, ?, ?, 'TBC', 'TBC', 'TBC', ?, ?, ?, 'TBC')"""
+        VALUES (NULL, ?, ?, 'TBC', 'TBC', 'TBC', ?, ?, ?, 'TBC')"""
     
     logging.debug("Execute Query: " + query + "\n@" + str(exp_record)) 
     
@@ -182,16 +182,14 @@ def pair_internal(db_h, amount, pattern):
 
 
 def update_TBC_by_mapping(db_h, mapping):
-    [id, io, keywords, type, cate, sub_cate, priority]  = mapping
-    
-    io = 'INFLOW' if io == 'IN' else 'OUTFLOW'
+    [id, keywords, type, cate, sub_cate, priority]  = mapping
     
     db_curs = db_h.db_conn.cursor()
     
     query = """
         UPDATE record
         SET type = '""" + type + "', cate = '" + cate + "', sub_cate = '" + sub_cate + "', keywords = '" + keywords + """'
-        WHERE desc like '%""" + keywords + "%' and keywords = 'TBC' and io = '" + io + "'" 
+        WHERE desc like '%""" + keywords + "%' and keywords = 'TBC'" 
     
     logging.debug("Execute Query: " + query)
     
@@ -204,8 +202,8 @@ def update_TBC_by_paired_internals(db_h, id1, id2):
     
     db_curs = db_h.db_conn.cursor()
     type = configs.types.off_balance
-    cate = configs.out_cates.internal
-    sub_cate = configs.out_sub_cates.internal_misc
+    cate = configs.cates.internal
+    sub_cate = configs.sub_cates.internal_misc
     keywords = 'INTERNALS'
     
     query = """
