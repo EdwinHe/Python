@@ -28,6 +28,13 @@ files_imported = 0
 records_imported = 0
 mappings_imported = 0
 
+# Reports
+report_filters = ["type <> 'OFF_BALANCE_SHEET'", 
+           "cate <> 'INTERNAL'", 
+           "cate <> 'CREDIT_INTEREST'", 
+           "cate <> 'PROPERTIES'",
+           "cate <> 'CASH'"]
+
 #TYPES
 class types:
     off_balance = 'OFF_BALANCE_SHEET'
@@ -39,7 +46,7 @@ class types:
 class cates:
     living = 'LIVING'
     insurace = 'INSURANCE'
-    transport = 'TRANSPORTATION'
+    transport = 'TRANSPORT'
     cash = 'CASH'
     rent = 'RENT' 
     social = 'SOCIAL'
@@ -112,6 +119,7 @@ keyword_mappings = (#OUT
                      ('LUNCH FEE', types.one_off, cates.living, sub_cates.living_food_n_drink, 5),
                      ('SEAFOOD BUYFOOD', types.one_off, cates.living, sub_cates.living_food_n_drink, 5),
                      ('DAVID JONES', types.one_off, cates.living, sub_cates.living_misc, 5),
+                     ('DICK SMITH', types.one_off, cates.living, sub_cates.living_misc, 5),
                      ('BUNNINGS', types.one_off, cates.living, sub_cates.living_misc, 5),
                      ('HOME AND KITCHEN', types.one_off, cates.living, sub_cates.living_misc, 5),
                      ('HANDYWAY WORLD KITC', types.one_off, cates.living, sub_cates.living_misc, 5),
@@ -148,6 +156,7 @@ keyword_mappings = (#OUT
                      # VERY GENERAL
                      ('GENERAL TRANSPORT', types.one_off, cates.transport, sub_cates.transport_misc, 8),
                      ('GENERAL FOOD', types.one_off, cates.living, sub_cates.living_food_n_drink, 8),
+                     ('GENERAL CASH', types.one_off, cates.cash, sub_cates.cash_misc, 8),
                      # ONE OFF - NOT RECURRING 
                      ('WDL BRANCH 116 BURWOOD RD', types.one_off, cates.properties, sub_cates.properties_car, 10),
                      ('ROCKDALE MAZDA ARNCLIFFE NS AUS CARD XX1940', types.one_off, cates.properties, sub_cates.properties_car, 10),

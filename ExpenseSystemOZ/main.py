@@ -4,7 +4,8 @@ Created on 16/03/2014
 @author: edwin
 '''
 
-from system import fileUtils, mainUtils
+from system import configs
+from system import fileUtils, mainUtils, reportUtils
     
 def main():
     # Initialize
@@ -25,6 +26,14 @@ def main():
     
     # Display unhandled records
     mainUtils.display_TBC(db_handler)
+    
+    # Display reports
+    #reportUtils.plot_bar_chart_sample()
+    #reportUtils.plot_table_chart_sample()
+    reportUtils.plot_stackplot_sample()
+    #reportUtils.plot_pie_chart(db_handler)
+    #reportUtils.plot_pie_chart(db_handler, cate = configs.cates.living)
+    #reportUtils.plot_pie_chart(db_handler, cate = configs.cates.living, date_range = ('2014-03-01', '2014-03-31'))
 
 if __name__ == '__main__':
     main()

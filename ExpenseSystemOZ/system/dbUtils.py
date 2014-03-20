@@ -216,5 +216,23 @@ def update_TBC_by_paired_internals(db_h, id1, id2):
     db_curs.execute(query)
     db_h.db_conn.commit()
     db_curs.close()
+    
+
+def retrieve_for_pie_chart(db_h, where_clause, group_by):
+    db_curs = db_h.db_conn.cursor()
+    
+    query = """
+        SELECT """ + group_by + """, sum(amount) 
+        FROM record 
+        WHERE """ + where_clause
+    
+    logging.debug("Execute Query: " + query)
+    
+    db_curs.execute(query)
+    result = db_curs.fetchall()
+    db_h.db_conn.commit()
+    db_curs.close()
+    
+    return result
 
     
