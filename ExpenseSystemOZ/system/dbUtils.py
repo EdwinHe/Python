@@ -217,6 +217,18 @@ def update_TBC_by_paired_internals(db_h, id1, id2):
     db_h.db_conn.commit()
     db_curs.close()
     
+def retrieve_all_records(db_h, query):
+    db_curs = db_h.db_conn.cursor()
+    
+    logging.debug("Execute Query: " + query)
+    
+    db_curs.execute(query)
+    result = db_curs.fetchall()
+    columns = [i[0] for i in db_curs.description]
+    db_h.db_conn.commit()
+    db_curs.close()
+    
+    return columns,result
 
 def retrieve_for_pie_chart(db_h, where_clause, group_by):
     db_curs = db_h.db_conn.cursor()

@@ -5,7 +5,8 @@ Created on 19/03/2014
 '''
 
 from system import configs
-from system import db, fileUtils, dbUtils
+from system import db, fileUtils, dbUtils, reportUtils
+import pandas as pd
 import logging
 import re
 
@@ -91,3 +92,43 @@ def display_TBC(db_h):
     
     for records in TBC_records:
         print(records[1:3],records[6:8])
+        
+def fetch_records_as_panda(db_h):
+    filters = ' AND '.join([f for f in configs.report_filters])
+    query = """SELECT SUBSTR(date,1,7) as date, amount, type, cate, sub_cate, desc
+           FROM record
+           WHERE """ + filters
+           
+    columns, all_records =  dbUtils.retrieve_all_records(db_h, query)
+    records = pd.DataFrame(all_records)
+    records.columns = columns
+    
+    return records
+
+
+def plot_table_by(records, date = None, cate = None, sub_cate = None, date_range = None):
+    
+    pv_filters = []
+    if cate:
+        pv_cols = 'sub_cate'
+        pv_filters.append("(records.cate == '" + cate + "')")  
+    else:
+        pv_cols = 'cate'
+    
+    
+    if date_range:
+        (start, end) = date_range
+        if start and end:
+            pv_filters.append("(records.date >= '" + start + "')")
+            pv_filters.append("(records.date <= '" + end + "')")
+        elif start:
+            pv_filters.append("(records.date >= '" + start + "')")
+        else:
+            pv_filters.append("(records.date <= '" + end + "')")
+    
+    if len(pv_filters) == 0:
+        pv_table = records.pivot_table('amount', rows = 'date', cols = pv_cols, aggfunc = 'sum').fillna(-0.0) * -1
+    else:
+        pv_table = records[eval(' & '.join(pv_filters))].pivot_table('amount', rows = 'date', cols = pv_cols, aggfunc = 'sum').fillna(-0.0) * -1
+    
+    reportUtils.plot_table_chart(pv_table)

@@ -5,7 +5,8 @@ Created on 16/03/2014
 '''
 
 from system import configs
-from system import fileUtils, mainUtils, reportUtils
+from system import mainUtils
+import pandas as pd
     
 def main():
     # Initialize
@@ -27,10 +28,14 @@ def main():
     # Display unhandled records
     mainUtils.display_TBC(db_handler)
     
+    records = mainUtils.fetch_records_as_panda(db_handler)
+    #mainUtils.plot_table_by(records,cate = 'LIVING', date_range = ('2014-01','2014-02'))
+    mainUtils.plot_table_by(records)
+    
     # Display reports
     #reportUtils.plot_bar_chart_sample()
     #reportUtils.plot_table_chart_sample()
-    reportUtils.plot_stackplot_sample()
+    #reportUtils.plot_stackplot_sample()
     #reportUtils.plot_pie_chart(db_handler)
     #reportUtils.plot_pie_chart(db_handler, cate = configs.cates.living)
     #reportUtils.plot_pie_chart(db_handler, cate = configs.cates.living, date_range = ('2014-03-01', '2014-03-31'))

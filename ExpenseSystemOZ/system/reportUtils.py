@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from system import configs
 from system import dbUtils
+from math import ceil
 
 def plot_stackplot_sample():
     fnx = lambda : np.random.randint(5, 50, 10)
@@ -121,6 +122,7 @@ def plot_pie_chart_sample():
     plt.axis('equal')
     plt.show()
     
+    
 def plot_pie_chart(db_h, date = None, cate = None, sub_cate = None, date_range = None):
     
     # Default filters
@@ -129,8 +131,10 @@ def plot_pie_chart(db_h, date = None, cate = None, sub_cate = None, date_range =
     if cate:
         group_by = 'sub_cate'
         filters.append("cate = '" + cate + "'")
+        title = 'Expense in Category: ' + cate
     else:
         group_by = 'cate'
+        title = 'Expense for all Category'
     
     where_clause = ' AND '.join(filters)
     
@@ -138,25 +142,80 @@ def plot_pie_chart(db_h, date = None, cate = None, sub_cate = None, date_range =
         (start, end) = date_range
         if start and end:
             where_clause += " AND date >= '" + start + "' and date <= '" + end + "'"
+            title += '\n between ' + start + ' and ' + end
         elif start:
             where_clause += " AND date >= '" + start + "'"
+            title += '\n since ' + start
         else:
             where_clause += " AND date <= '" + end + "'"
+            title += '\n up till ' + end
     
     where_clause += ' GROUP BY ' + group_by
     
     result = dbUtils.retrieve_for_pie_chart(db_h, where_clause, group_by)
     labels = [lable for (lable, value) in result]
     values = [value * -1 for (lable, value) in result]
-    
+     
     #colors = ['yellowgreen', 'gold', 'lightskyblue', 'lightcoral']
     #explode = (0, 0.1, 0, 0) # only "explode" the 2nd slice (i.e. 'Hogs')
     
     #plt.pie(sizes, explode=explode, labels=labels, colors=colors,
     #        autopct='%1.1f%%', shadow=True, startangle=90)
     
-    plt.pie(values, labels=labels, autopct='%1.2f%%', shadow=True, startangle=90, labledistance = 1.5)
+    plt.pie(values, labels=labels, autopct='%1.2f%%', shadow=True, startangle=90)
     
     # Set aspect ratio to be equal so that pie is drawn as a circle.
-    #plt.axis('equal')
+    plt.title(title)
+    plt.show()
+    
+
+def plot_table_chart(pv_table):
+    
+    to_listoftuples = list(pv_table.T.itertuples())
+    
+    data = [r[1:] for r in to_listoftuples]
+    
+    columns = list(pv_table.T.columns)
+    rows = [r[0] for r in to_listoftuples]
+    
+    column_sum = [ceil(amount) for amount in list(pv_table.T.sum())]
+    
+    values = np.arange(0, ceil( max([sum(d[1:]) for d in list(pv_table.itertuples())]) / 100) * 100, 200)
+    
+    # Get some pastel shades for the colors
+    colors = plt.cm.Accent(np.linspace(0, 1, len(rows)))
+    n_rows = len(data)
+    
+    index = np.arange(len(columns)) + 0.3
+    bar_width = 0.6
+    
+    # Initialize the vertical-offset for the stacked bar chart.
+    y_offset = np.array([0.0] * len(columns))
+    
+    # Plot bars and create text labels for the table
+    cell_text = []
+    for row in range(n_rows):
+        plt.bar(index, data[row], bar_width, bottom=y_offset, color=colors[row])
+        y_offset = y_offset + data[row]
+        #y_offset = data[n_rows - row - 1]
+        cell_text.append(['%1.1f' % (x) for x in data[row]])
+    # Reverse colors and text labels to display the last value at the top.
+    colors = colors[::-1]
+    cell_text.reverse()
+    
+    # Add a table at the bottom of the axes
+    the_table = plt.table(cellText=cell_text,
+                          rowLabels=rows[::-1],
+                          rowColours=colors,
+                          colLabels=[col +' ($' + str(amount) + ')' for (col,amount) in zip(columns, column_sum)],
+                          loc='bottom')
+    
+    # Adjust layout to make room for the table:
+    plt.subplots_adjust(left=0.2, bottom=0.25)
+    
+    #plt.ylabel("In AUD $")
+    plt.yticks(values, ['$%d' % val for val in values])
+    plt.xticks([])
+    plt.title('Expense By Month')
+    
     plt.show()
