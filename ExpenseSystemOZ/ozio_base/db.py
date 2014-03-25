@@ -11,7 +11,8 @@ from mysql.connector import errorcode
 class DB:
     def __init__(self, db_config):
         try:
-            self.connection = mysql.connector.connect(**db_config)
+            self.db_config = db_config
+            self.connection = mysql.connector.connect(**self.db_config)
         except mysql.connector.Error as err:
             if err.errno == errorcode.ER_ACCESS_DENIED_ERROR:
                 logging.critical("Incorrect User Name Or Password!")
@@ -23,6 +24,7 @@ class DB:
                 print(err)
             raise Exception('DB Connection Failed!')
     
-    def wipe_data(self):
+    def wipe_data(self, db_config):
         pass
+    
         

@@ -60,32 +60,29 @@ def fill_out_TBC(db_h):
     1. By mappings defined in configs.py
     2. By pairing up internal transfer made between Ed and Co
     '''
-    pass
-    #===========================================================================
-    # 
-    # # 1
-    # mappings = dbUtils.fetch_mappings(db_h)
-    # for mapping in mappings:
-    #     logging.debug("Updating " + mapping[1] + " records with key words: " + mapping[2])
-    #     dbUtils.update_TBC_by_mapping(db_h, mapping)
-    # 
-    # # 2
-    # internals = dbUtils.fetch_unpaired_internals(db_h)
-    # for internal in internals:
-    #     # 0   1     2       3     4     5         6     7          8          9  
-    #     #[id, date, amount, type, cate, sub_cate, desc, orig_desc, file_name, keywords] = internal
-    #     logging.info("Pairing internal transfer: " + ',' + str(internal[1]) + ',' + str(internal[2]) + ',' + str(internal[6]))
-    #     
-    #     lookfor_pattern = 'TRANSFER TO CBA A/C NETBANK ' + re.sub('TRANSFER FROM (.)+ NETBANK ','',internal[6])
-    #     neg_amount = str(-1 * float(internal[2]))
-    #     paired_internals = dbUtils.pair_internal(db_h, neg_amount, lookfor_pattern)
-    #     if len(paired_internals) != 1:
-    #         logging.warning("Failed to pair. " + str(len(paired_internals)) + " pair found! TBC not updated for record id = " + str(internal[0]))
-    #     else:
-    #         [paired_internal] = paired_internals
-    #         logging.info("Paired: " + ',' + str(paired_internal[1]) + ',' + str(paired_internal[2]) + ',' + str(paired_internal[6]))
-    #         dbUtils.update_TBC_by_paired_internals(db_h, internal[0], paired_internal[0])
-    #===========================================================================
+    # 1
+    mappings = dbUtils.fetch_mappings(db_h)
+    for mapping in mappings:
+        logging.debug("Updating records with key words: " + mapping[1])
+        dbUtils.update_TBC_by_mapping(db_h, mapping)
+      
+    # 2
+    internals = dbUtils.fetch_unpaired_internals(db_h)
+    for internal in internals:
+        # 0   1     2       3     4          5               6  
+        #[id, date, amount, desc, orig_desc, source_file_id, keyword_id] = internal
+        logging.info("Pairing internal transfer: " + ',' + str(internal[1]) + ',' + str(internal[2]) + ',' + str(internal[3]))
+           
+        lookfor_pattern = 'TRANSFER TO CBA A/C NETBANK ' + re.sub('TRANSFER FROM (.)+ NETBANK ','',internal[3])
+        neg_amount = -1 * internal[2]
+        paired_internals = dbUtils.pair_internal(db_h, neg_amount, lookfor_pattern)
+        
+        if len(paired_internals) != 1:
+            logging.warning("Failed to pair. " + str(len(paired_internals)) + " pairs found! TBC not updated for record id = " + str(internal[0]))
+        else:
+            [paired_internal] = paired_internals
+            logging.info("Paired: " + ',' + str(paired_internal[1]) + ',' + str(paired_internal[2]) + ',' + str(paired_internal[3]))
+            dbUtils.update_TBC_by_paired_internals(db_h, internal[0], paired_internal[0])
     
 def display_TBC(db_h):
     TBC_records = dbUtils.fetch_TBC(db_h)
@@ -96,7 +93,7 @@ def display_TBC(db_h):
         return
     
     for records in TBC_records:
-        print(records[1:3],records[6:8])
+        print(records[1:4])
        
 #===============================================================================
 # def fetch_records_as_panda(db_h):

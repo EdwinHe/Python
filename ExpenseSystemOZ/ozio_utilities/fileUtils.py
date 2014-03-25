@@ -78,7 +78,8 @@ def search_file(db_h, cfg_h):
     file_list = []
     for root, _, files in os.walk(cfg_h.file_config['expense_source_loc']):
         for file_name in files:
-            if file_name.find('.csv') == -1:
+            if len(re.findall('.csv$', file_name)) == 0:
+                logging.debug("Skipping file: " + file_name)
                 continue
             
             logging.debug("Looping to file: " + file_name)

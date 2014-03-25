@@ -14,13 +14,13 @@ def main():
     db_h = mainUtils.init_db(cfg_h.db_config)
 
     # Search for new expense files and import
-    mainUtils.refresh_records(db_h, cfg_h)
+    #mainUtils.refresh_records(db_h, cfg_h)
 
     # Try to fill out the TBC columns 
-    #mainUtils.fill_out_TBC(db_h)
+    mainUtils.fill_out_TBC(db_h)
 
     # Display unhandled records
-    #mainUtils.display_TBC(db_h)
+    mainUtils.display_TBC(db_h)
     
     #records = mainUtils.fetch_records_as_panda(db_h)
     #mainUtils.plot_table_by(records)
