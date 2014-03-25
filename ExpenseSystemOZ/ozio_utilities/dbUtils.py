@@ -4,11 +4,9 @@ Created on 18/03/2014
 @author: edwin
 '''
 
-from system import configs
 import os.path
-import datetime
 import logging
-
+#from ozio_utilities import configs_notinuse as configs
             
 def insert_mapping(db_h, mapping):
     db_curs = db_h.db_conn.cursor()

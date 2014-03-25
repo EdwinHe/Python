@@ -4,33 +4,27 @@ Created on 16/03/2014
 @author: edwin
 '''
 
-from system import configs
-from system import mainUtils
-import pandas as pd
+from ozio_utilities import mainUtils
     
 def main():
-    # Initialize
-    mainUtils.init_log()
-    db_handler = mainUtils.init_db()
     
-    # Check for new mappings and add
-    mainUtils.refresh_mapping(db_handler)
+    # Init
+    cfg_h = mainUtils.load_config('/Users/edwin/Programming/Python/ExpenseSystemOZ/ozio.cfg')
+    mainUtils.init_log(cfg_h)
+    db_h = mainUtils.init_db(cfg_h.db_config)
 
     # Search for new expense files and import
-    mainUtils.refresh_records(db_handler)
+    mainUtils.refresh_records(db_h, cfg_h)
 
     # Try to fill out the TBC columns 
-    mainUtils.fill_out_TBC(db_handler)
-    
-    # Display status
-    mainUtils.display_status()
-    
+    mainUtils.fill_out_TBC(db_h)
+
     # Display unhandled records
-    mainUtils.display_TBC(db_handler)
+    mainUtils.display_TBC(db_h)
     
-    records = mainUtils.fetch_records_as_panda(db_handler)
+    #records = mainUtils.fetch_records_as_panda(db_h)
+    #mainUtils.plot_table_by(records)
     #mainUtils.plot_table_by(records,cate = 'LIVING', date_range = ('2014-01','2014-02'))
-    mainUtils.plot_table_by(records)
     
     # Display reports
     #reportUtils.plot_bar_chart_sample()

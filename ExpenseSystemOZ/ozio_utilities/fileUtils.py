@@ -4,7 +4,8 @@ Created on 18/03/2014
 @author: edwin
 '''
 
-from system import configs, dbUtils
+#from ozio_utilities import configs_notinuse as configs
+from ozio_utilities import dbUtils
 import logging
 import os.path
 import re
@@ -62,7 +63,6 @@ def import_file(db_h, root, file_name):
     for line in open(root + '/' + file_name, 'r'):
         for record in parse_record(line):
             if dbUtils.is_new_record(db_h, record + [file_name]):
-                configs.records_imported += 1
                 dbUtils.insert_record(db_h, record + [file_name])
             
     dbUtils.insert_file(db_h, file_name)
@@ -70,12 +70,12 @@ def import_file(db_h, root, file_name):
     
     
 
-def search_file(db_h):
-    assert os.path.exists(configs.expense_source_loc)
+def search_file(db_h, cfg_h):
+    assert os.path.exists(cfg_h.file_config['expense_source_loc'])
     logging.info("Searching for new expense source file...")
         
     file_list = []
-    for root, _, files in os.walk(configs.expense_source_loc):
+    for root, _, files in os.walk(cfg_h.file_config['expense_source_loc']):
         for file_name in files:
             if file_name.find('.csv') == -1:
                 continue
