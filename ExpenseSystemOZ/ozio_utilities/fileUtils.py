@@ -56,20 +56,21 @@ def parse_record(line):
     return transactions
     
 
-def import_file(db_h, root, file_name):
+def import_file(db_h, cfg_h, root, file_name):
     logging.info('++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
     logging.info('Start processing file: ' + file_name)
     
+    file_id = dbUtils.insert_file(db_h, file_name)
+    
     for line in open(root + '/' + file_name, 'r'):
         for record in parse_record(line):
-            if dbUtils.is_new_record(db_h, record + [file_name]):
-                dbUtils.insert_record(db_h, record + [file_name])
+            if dbUtils.is_new_record(db_h, record + [file_id]):
+                dbUtils.insert_record(db_h, record + [file_id])
             
-    dbUtils.insert_file(db_h, file_name)
+    
     logging.info('Finished processing file: ' + file_name)
     
     
-
 def search_file(db_h, cfg_h):
     assert os.path.exists(cfg_h.file_config['expense_source_loc'])
     logging.info("Searching for new expense source file...")
